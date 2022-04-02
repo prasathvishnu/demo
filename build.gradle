@@ -1,10 +1,31 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("io.micronaut.application") version "3.3.0"
+    id("groovy")
+    id 'pl.allegro.tech.build.axion-release' version '1.13.6'
 }
 
-version = "0.1"
-group = "com.example"
+scmVersion {
+    ignoreUncommittedChanges = false
+    versionIncrementer 'incrementMinor'
+    tag {
+        prefix = 'demo'
+        versionSeparator = '-'
+    }
+    nextVersion {
+        suffix = 'SNAPSHOT'
+        separator = '-'
+    }
+
+    hooks {
+        //Not yet working
+        pre 'fileUpdate', [file: 'README.md', pattern: { v, c -> /version: $v/ }, replacement: { v, c -> "version: $v" }]
+        pre 'commit'
+    }
+}
+
+version = scmVersion.version
+//group = "com.example"
 
 repositories {
     mavenCentral()
